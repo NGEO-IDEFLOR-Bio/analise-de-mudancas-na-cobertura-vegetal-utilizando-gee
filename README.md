@@ -6,7 +6,7 @@ Este repositório contém um script em JavaScript para processamento de imagens 
 
 ## Versões Disponíveis
 
-- [script-gee.js](script-gee.js): Versão comentada com documentação completa de cada seção. Recomendada para aprendizado e compreensão dos fundamentos metodológicos.
+- [script-gee-comentado.js](script-gee-comentado.js): Versão comentada com documentação completa de cada seção. Recomendada para aprendizado e compreensão dos fundamentos metodológicos.
 - [script-gee-limpo.js](script-gee-limpo.js): Versão otimizada com comentários mínimos. Recomendada para uso operacional após configuração inicial.
 
 ## Contextualização Científica
