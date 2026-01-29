@@ -13,22 +13,22 @@ function cleanMask(img) {
   var maskScl = scl.eq(4).or(scl.eq(5)).or(scl.eq(6));
   var maskQa = qa.bitwiseAnd(1 << 10).eq(0).and(qa.bitwiseAnd(1 << 11).eq(0));
   var maskBright = img.select('B2').lt(2000);
-  
+
   return img.updateMask(maskScl).updateMask(maskQa).updateMask(maskBright)
-            .divide(10000)
-            .copyProperties(img, ["system:time_start"]);
+    .divide(10000)
+    .copyProperties(img, ["system:time_start"]);
 }
 
 // 3. Coleções Sentinel-2 (Harmonized SR)
 var s2Atual = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
-    .filterBounds(areaEstudo)
-    .filterDate(seisMesesAtras, hoje)
-    .map(cleanMask);
+  .filterBounds(areaEstudo)
+  .filterDate(seisMesesAtras, hoje)
+  .map(cleanMask);
 
 var s2Passado = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
-    .filterBounds(areaEstudo)
-    .filterDate(umAnoAtras, seisMesesAtras)
-    .map(cleanMask);
+  .filterBounds(areaEstudo)
+  .filterDate(umAnoAtras, seisMesesAtras)
+  .map(cleanMask);
 
 // 4. Mosaicos (Mediana para remoção de artefatos)
 var mosAtual = s2Atual.median().clip(areaEstudo);
@@ -46,10 +46,10 @@ var alertaPerda = ndviAtual.subtract(ndviPassado).lt(-0.2);
 var alertaPerdaMasked = alertaPerda.updateMask(alertaPerda);
 
 // 7. Parâmetros de Visualização
-var visNatural = {bands:['B4','B3','B2'], min:0.02, max:0.2, gamma:1.2};
-var visFalsaCor = {bands:['B12','B8','B4'], min:0.05, max:0.4, gamma:1.1};
-var visNdvi = {min: 0.5, max: 0.9, palette: ['white', 'yellow', 'green', 'darkgreen']};
-var visMvi = {min: -0.1, max: 0.5, palette: ['brown', 'white', 'blue']};
+var visNatural = { bands: ['B4', 'B3', 'B2'], min: 0.02, max: 0.2, gamma: 1.2 };
+var visFalsaCor = { bands: ['B12', 'B8', 'B4'], min: 0.05, max: 0.4, gamma: 1.1 };
+var visNdvi = { min: 0.5, max: 0.9, palette: ['white', 'yellow', 'green', 'darkgreen'] };
+var visMvi = { min: -0.1, max: 0.5, palette: ['brown', 'white', 'blue'] };
 
 // Configuração do Mapa
 Map.centerObject(areaEstudo, 10);
@@ -68,8 +68,8 @@ Map.addLayer(ndviAtual, visNdvi, '2b. NDVI (Atual)', false);
 Map.addLayer(mviPassado, visMvi, '3a. MVI/Umidade (Passado)', false);
 Map.addLayer(mviAtual, visMvi, '3b. MVI/Umidade (Atual)', false);
 
-Map.addLayer(alertaPerdaMasked, {palette: ['#FF00FF']}, '!!! ALERTA DE PERDA DE VEGETAÇÃO');
-Map.addLayer(areaEstudo.draw({color: 'red', strokeWidth: 2}), {}, 'Limite da Área de Estudo');
+Map.addLayer(alertaPerdaMasked, { palette: ['#FF00FF'] }, '!!! ALERTA DE PERDA DE VEGETAÇÃO');
+Map.addLayer(areaEstudo.draw({ color: 'red', strokeWidth: 2 }), {}, 'Limite da Área de Estudo');
 
 // 8. Exportações (Com Simbologia aplicada via .visualize())
 
@@ -103,6 +103,16 @@ Export.image.toDrive({
   maxPixels: 1e13
 });
 
+// Exportação Cor Natural (Passado)
+Export.image.toDrive({
+  image: mosPassado.visualize(visNatural),
+  description: 'Cor_Natural_Passado_AreaEstudo',
+  folder: 'GEE_Analise_Cobertura',
+  region: areaEstudo.geometry(),
+  scale: 10,
+  maxPixels: 1e13
+});
+
 // Exportação NDVI (Atual)
 Export.image.toDrive({
   image: ndviAtual.visualize(visNdvi),
@@ -125,10 +135,30 @@ Export.image.toDrive({
 
 // Exportação Alerta de Perda
 Export.image.toDrive({
-  image: alertaPerdaMasked.visualize({palette: ['#FF00FF']}),
+  image: alertaPerdaMasked.visualize({ palette: ['#FF00FF'] }),
   description: 'Alerta_Mudanca_Simbologia',
   folder: 'GEE_Analise_Cobertura',
   region: areaEstudo.geometry(),
   scale: 10,
+  maxPixels: 1e13
+});
+
+// Exportação NDVI (Passado)
+Export.image.toDrive({
+  image: ndviPassado.visualize(visNdvi),
+  description: 'NDVI_Simbologia_Passado',
+  folder: 'GEE_Analise_Cobertura',
+  region: areaEstudo.geometry(),
+  scale: 10,
+  maxPixels: 1e13
+});
+
+// Exportação MVI (Passado)
+Export.image.toDrive({
+  image: mviPassado.visualize(visMvi),
+  description: 'MVI_Simbologia_Passado',
+  folder: 'GEE_Analise_Cobertura',
+  region: areaEstudo.geometry(),
+  scale: 20, // Mantendo a escala de 20m conforme o seu MVI atual
   maxPixels: 1e13
 });
