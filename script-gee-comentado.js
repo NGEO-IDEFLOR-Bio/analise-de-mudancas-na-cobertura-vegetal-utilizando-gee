@@ -125,20 +125,33 @@ Map.centerObject(areaEstudo, 10);
  * Composição: Bandas Vermelho (B4), Verde (B3), Azul (B2)
  * Simula a visão humana e permite interpretação visual de alterações
  */
-Map.addLayer(mosPassado, 
-  {bands:['B4','B3','B2'], min:0.02, max:0.2, gamma:1.2}, 
-  '1a. Cor Natural (Passado)', 
-  false);
+// Parâmetros de visualização pré-configurados
+var visNatural = {bands:['B4','B3','B2'], min:0.02, max:0.2, gamma:1.2};
+var visFalsaCor = {bands:['B12','B8','B4'], min:0.05, max:0.4, gamma:1.1};
+var visNdvi = {min: 0.5, max: 0.9, palette: ['white', 'yellow', 'green', 'darkgreen']};
+var visMvi = {min: -0.1, max: 0.5, palette: ['brown', 'white', 'blue']};
 
-Map.addLayer(mosAtual, 
-  {bands:['B4','B3','B2'], min:0.02, max:0.2, gamma:1.2}, 
-  '1b. Cor Natural (Atual)');
+/**
+ * CAMADAS DE CORES NATURAIS (RGB)
+ * Composição: Bandas Vermelho (B4), Verde (B3), Azul (B2)
+ * Simula a visão humana e permite interpretação visual de alterações
+ */
+Map.addLayer(mosPassado, visNatural, '1a. Cor Natural (Passado)', false);
+Map.addLayer(mosAtual, visNatural, '1b. Cor Natural (Atual)', false);
+
+/**
+ * CAMADAS DE FALSA COR (B12-B8-B4)
+ * Composição: Banda SWIR (B12), NIR (B8), Red (B4)
+ * Útil para realçar diferenças espectrais e detectar mudanças na vegetação
+ * B12 (SWIR) realça umidade; B8 (NIR) detecta vegetação; B4 (Red) diferencia solo
+ */
+Map.addLayer(mosPassado, visFalsaCor, '1c. Falsa Cor B12-B8-B4 (Passado)', false);
+Map.addLayer(mosAtual, visFalsaCor, '1d. Falsa Cor B12-B8-B4 (Atual)');
 
 /**
  * CAMADAS DE NDVI
  * Paleta: branco (sem vegetação) → verde escuro (vegetação densa)
  */
-var visNdvi = {min: 0.5, max: 0.9, palette: ['white', 'yellow', 'green', 'darkgreen']};
 Map.addLayer(ndviPassado, visNdvi, '2a. NDVI (Passado)', false);
 Map.addLayer(ndviAtual, visNdvi, '2b. NDVI (Atual)', false);
 
@@ -146,7 +159,6 @@ Map.addLayer(ndviAtual, visNdvi, '2b. NDVI (Atual)', false);
  * CAMADAS DE MVI/UMIDADE
  * Paleta: marrom (seco) → branco (neutro) → azul (úmido)
  */
-var visMvi = {min: -0.1, max: 0.5, palette: ['brown', 'white', 'blue']};
 Map.addLayer(mviPassado, visMvi, '3a. MVI/Umidade (Passado)', false);
 Map.addLayer(mviAtual, visMvi, '3b. MVI/Umidade (Atual)', false);
 
@@ -165,31 +177,23 @@ Map.addLayer(areaEstudo.draw({color: 'red', strokeWidth: 2}), {}, 'Limite da Ár
 /**
  * 8. EXPORTAÇÃO DE RESULTADOS
  * 
- * Exporta todas as camadas processadas para o Google Drive para análise posterior
+ * Exporta todas as camadas processadas e visualizadas para o Google Drive para análise posterior
  * e integração em sistemas de informação geográfica (SIG) como ArcGIS ou QGIS.
+ * O método .visualize() aplica a paleta de cores antes da exportação.
  * 
  * CONFIGURAÇÃO:
  * - folder: Nome da pasta no Google Drive onde os arquivos serão salvos
- * - scale: Resolução espacial em metros (10m para NDVI, 20m para MVI)
+ * - scale: Resolução espacial em metros (10m para RGB e NDVI, 20m para MVI)
  * - maxPixels: Limite de processamento (1e13 = sem limite prático)
  */
 
 /**
- * Exportação de NDVI: Dados brutos para análise quantitativa
- * Formato: GeoTIFF com valores de -1 a 1
+ * Exportação Falsa Cor (Atual)
+ * Composição B12-B8-B4 com simbologia aplicada para melhor visualização
  */
 Export.image.toDrive({
-  image: ndviAtual,
-  description: 'NDVI_Atual_AreaEstudo',
-  folder: 'GEE_Analise_Cobertura',
-  region: areaEstudo.geometry(),
-  scale: 10,
-  maxPixels: 1e13
-});
-
-Export.image.toDrive({
-  image: ndviPassado,
-  description: 'NDVI_Passado_AreaEstudo',
+  image: mosAtual.visualize(visFalsaCor),
+  description: 'FalsaCor_B12B8B4_Atual_AreaEstudo',
   folder: 'GEE_Analise_Cobertura',
   region: areaEstudo.geometry(),
   scale: 10,
@@ -197,33 +201,24 @@ Export.image.toDrive({
 });
 
 /**
- * Exportação de MVI: Índice de umidade para análise de saúde vegetal
- * Formato: GeoTIFF com valores de -1 a 1
+ * Exportação Falsa Cor (Passado)
+ * Composição B12-B8-B4 com simbologia aplicada para melhor visualização
  */
 Export.image.toDrive({
-  image: mviAtual,
-  description: 'MVI_Atual_AreaEstudo',
+  image: mosPassado.visualize(visFalsaCor),
+  description: 'FalsaCor_B12B8B4_Passado_AreaEstudo',
   folder: 'GEE_Analise_Cobertura',
   region: areaEstudo.geometry(),
-  scale: 20,
-  maxPixels: 1e13
-});
-
-Export.image.toDrive({
-  image: mviPassado,
-  description: 'MVI_Passado_AreaEstudo',
-  folder: 'GEE_Analise_Cobertura',
-  region: areaEstudo.geometry(),
-  scale: 20,
+  scale: 10,
   maxPixels: 1e13
 });
 
 /**
- * Exportação de Cores Naturais: Imagens compostas RGB para apresentações
- * Formato: GeoTIFF com valores de reflectância normalizada (0-255 após visualização)
+ * Exportação Cor Natural (Atual)
+ * Composição RGB tradicional com simbologia aplicada
  */
 Export.image.toDrive({
-  image: mosAtual.visualize({bands: ['B4', 'B3', 'B2'], min: 0.02, max: 0.2, gamma: 1.2}),
+  image: mosAtual.visualize(visNatural),
   description: 'Cor_Natural_Atual_AreaEstudo',
   folder: 'GEE_Analise_Cobertura',
   region: areaEstudo.geometry(),
@@ -231,9 +226,13 @@ Export.image.toDrive({
   maxPixels: 1e13
 });
 
+/**
+ * Exportação NDVI (Atual)
+ * Índice de vegetação normalizado com paleta de cores para fácil interpretação
+ */
 Export.image.toDrive({
-  image: mosPassado.visualize({bands: ['B4', 'B3', 'B2'], min: 0.02, max: 0.2, gamma: 1.2}),
-  description: 'Cor_Natural_Passado_AreaEstudo',
+  image: ndviAtual.visualize(visNdvi),
+  description: 'NDVI_Simbologia_Atual',
   folder: 'GEE_Analise_Cobertura',
   region: areaEstudo.geometry(),
   scale: 10,
@@ -241,12 +240,25 @@ Export.image.toDrive({
 });
 
 /**
- * Exportação de Alertas: Mapa binário de detecção de mudanças
- * Formato: GeoTIFF com valores 0 (sem mudança) e 1 (perda de vegetação)
+ * Exportação MVI (Atual)
+ * Índice de umidade/umidade com paleta de cores para melhor visualização
  */
 Export.image.toDrive({
-  image: alertaPerda.uint8(),
-  description: 'Alerta_Mudanca_AreaEstudo',
+  image: mviAtual.visualize(visMvi),
+  description: 'MVI_Simbologia_Atual',
+  folder: 'GEE_Analise_Cobertura',
+  region: areaEstudo.geometry(),
+  scale: 20,
+  maxPixels: 1e13
+});
+
+/**
+ * Exportação Alerta de Perda
+ * Mapa binário com destaque (magenta) para áreas com perda de vegetação
+ */
+Export.image.toDrive({
+  image: alertaPerdaMasked.visualize({palette: ['#FF00FF']}),
+  description: 'Alerta_Mudanca_Simbologia',
   folder: 'GEE_Analise_Cobertura',
   region: areaEstudo.geometry(),
   scale: 10,
