@@ -73,7 +73,7 @@ Considera-se como alerta de possível desmatamento ou degradação aquelas área
 
 A principal modificação necessária é a definição do asset que contém a geometria da área de estudo. Esta modificação é idêntica em ambas as versões:
 
-**Em script-gee.js (linha 9):**
+**Em script-gee-comentado.js (linha 9):**
 ```javascript
 var areaEstudo = ee.FeatureCollection("projects/seu-projeto/assets/seu-asset");
 ```
@@ -112,7 +112,7 @@ Parâmetros que podem ser ajustados conforme necessário:
 ### Execução
 
 1. Acesse https://code.earthengine.google.com
-2. Cole o conteúdo do arquivo `script-gee.js`
+2. Cole o conteúdo do arquivo `script-gee-comentado.js` (para versão comentada) ou `script-gee-limpo.js` (para versão otimizada)
 3. Clique em "Run" para visualizar as camadas no mapa
 4. Na aba "Tasks", clique em "Run" para cada exportação desejada
 
