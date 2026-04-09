@@ -4,6 +4,36 @@
 
 Este repositório contém um script em JavaScript para processamento de imagens de satélite Sentinel-2 voltado à detecção de mudanças na cobertura vegetal em unidades de conservação e áreas sob monitoramento ambiental. O script utiliza a plataforma Google Earth Engine para acesso aos dados e processamento em nuvem, possibilitando análises em larga escala com recursos computacionais otimizados.
 
+## Scripts Disponíveis
+
+### Análise de Cobertura Vegetal (Sentinel-2)
+
+| Script | Descrição |
+|--------|-----------|
+| [script-gee-comentado.js](script-gee-comentado.js) | Script principal com documentação completa. Utiliza imagens Sentinel-2 para detectar mudanças na cobertura vegetal através de NDVI e MVI. Recomendado para aprendizado. |
+| [script-gee-limpo.js](script-gee-limpo.js) | Versão otimizada do script acima com comentários mínimos. Para uso operacional após configuração. |
+
+### MapBiomas
+
+| Script | Descrição |
+|--------|-----------|
+| [script-mapbiomas-raster.js](script-mapbiomas-raster.js) | Download de dados MapBiomas Coleção 10 em formato raster (GeoTIFF). Exporta composição colorida por classe de uso do solo. |
+| [script-mapbiomas-shape.js](script-mapbiomas-shape.js) | Exporta dados MapBiomas Coleção 10 em formato vetorial (shapefile). Realiza vetorização do raster classifying e inclui legenda completa com nomes e cores. |
+
+### Landsat e SPOT
+
+| Script | Descrição |
+|--------|-----------|
+| [script-landsat-anual.js](script-landsat-anual.js) | Gera composições anuais Landsat (2000-2008) utilizando composição SWIR2-NIR-Green (7-5-3). Inclui mosaico SPOT 2008 como referência histórica de alta resolução (2.5m). |
+| [script-spot.js](script-spot.js) | Download do mosaico SPOT 2008 de alta resolução (2.5m) para a área de estudo. Útil como referência histórica para detecção de mudanças. |
+
+### Processamento QGIS
+
+| Script | Descrição |
+|--------|-----------|
+| [aplica-ISO-8859-1.py](aplica-ISO-8859-1.py) | Script Python para QGIS que corrige a codificação de caracteres das camadas importadas (acentos e caracteres especiais). |
+| [aplica-simbologia-pyqgis.py](aplica-simbologia-pyqgis.py) | Aplica symbologia categorizada automaticamente às camadas MapBiomas, utilizando as cores e nomes das classes definidos na vetorização. |
+
 ## Versões Disponíveis
 
 - [script-gee-comentado.js](script-gee-comentado.js): Versão comentada com documentação completa de cada seção. Recomendada para aprendizado e compreensão dos fundamentos metodológicos.
