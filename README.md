@@ -20,6 +20,12 @@ Este repositório contém um script em JavaScript para processamento de imagens 
 | [script-mapbiomas-raster.js](script-mapbiomas-raster.js) | Download de dados MapBiomas Coleção 10 em formato raster (GeoTIFF). Exporta composição colorida por classe de uso do solo. |
 | [script-mapbiomas-shape.js](script-mapbiomas-shape.js) | Exporta dados MapBiomas Coleção 10 em formato vetorial (shapefile). Realiza vetorização do raster classifying e inclui legenda completa com nomes e cores. |
 
+### Download de Mosaico Sentinel-2
+
+| Script | Descrição |
+|--------|-----------|
+| [download-mosaico-sentinel.js](download-mosaico-sentinel.js) | Gera mosaico Sentinel-2 (composição cor natural e falsa cor B12-B8-B4) para um período configurável, com opção de exportar o recorte do polígono ou a extensão (bounding box). Utiliza o asset PESAM como área de estudo. |
+
 ### Landsat e SPOT
 
 | Script | Descrição |
