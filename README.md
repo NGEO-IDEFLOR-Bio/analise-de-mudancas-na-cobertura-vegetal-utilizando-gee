@@ -1,8 +1,8 @@
-# Análise de Mudanças na Cobertura Vegetal Utilizando Google Earth Engine
+# Análise de Cobertura Vegetal com Google Earth Engine
 
 ## Resumo
 
-Este repositório contém um script em JavaScript para processamento de imagens de satélite Sentinel-2 voltado à detecção de mudanças na cobertura vegetal em unidades de conservação e áreas sob monitoramento ambiental. O script utiliza a plataforma Google Earth Engine para acesso aos dados e processamento em nuvem, possibilitando análises em larga escala com recursos computacionais otimizados.
+Este repositório contém scripts em JavaScript para processamento de imagens de satélite no Google Earth Engine, voltados à análise de cobertura vegetal e detecção de mudanças em unidades de conservação e áreas sob monitoramento ambiental. Inclui scripts para mosaicos Sentinel-2 e Landsat, dados MapBiomas, referência SPOT 2008 e ferramentas para QGIS.
 
 ## Scripts Disponíveis
 
@@ -10,70 +10,48 @@ Este repositório contém um script em JavaScript para processamento de imagens 
 
 | Script | Descrição |
 |--------|-----------|
-| [script-gee-comentado.js](script-gee-comentado.js) | Script principal com documentação completa. Utiliza imagens Sentinel-2 para detectar mudanças na cobertura vegetal através de NDVI e MVI. Recomendado para aprendizado. |
-| [script-gee-limpo.js](script-gee-limpo.js) | Versão otimizada do script acima com comentários mínimos. Para uso operacional após configuração. |
+| [script-gee-comentado.js](script-gee-comentado.js) | Detecção de mudanças na cobertura vegetal via NDVI e MVI com documentação completa. Recomendado para aprendizado. |
+| [script-gee-limpo.js](script-gee-limpo.js) | Versão otimizada do script acima com comentários mínimos. Para uso operacional. |
+
+### Download de Mosaicos
+
+| Script | Descrição |
+|--------|-----------|
+| [download-mosaico-sentinel.js](download-mosaico-sentinel.js) | Gera mosaico Sentinel-2 (cor natural e falsa cor B12-B8-B4) para um período configurável, com opção de exportar recorte do polígono ou extensão (bounding box). |
+| [script-export-periodos.js](script-export-periodos.js) | Exporta mosaicos em períodos fixos (padrão: 3 anos) cobrindo de 1984 a 2026, combinando Landsat 5/7/8/9, Sentinel-2 e SPOT 2008. Inclui banda de data e buffer com margem ao redor da área. |
+| [script-landsat-anual.js](script-landsat-anual.js) | Composições anuais Landsat (2000-2008) em SWIR2-NIR-Green com mosaico SPOT 2008 como referência histórica (2.5m). |
+| [script-spot.js](script-spot.js) | Download do mosaico SPOT 2008 de alta resolução (2.5m) como referência histórica. |
 
 ### MapBiomas
 
 | Script | Descrição |
 |--------|-----------|
-| [script-mapbiomas-raster.js](script-mapbiomas-raster.js) | Download de dados MapBiomas Coleção 10 em formato raster (GeoTIFF). Exporta composição colorida por classe de uso do solo. |
-| [script-mapbiomas-shape.js](script-mapbiomas-shape.js) | Exporta dados MapBiomas Coleção 10 em formato vetorial (shapefile). Realiza vetorização do raster classifying e inclui legenda completa com nomes e cores. |
-
-### Download de Mosaico Sentinel-2
-
-| Script | Descrição |
-|--------|-----------|
-| [download-mosaico-sentinel.js](download-mosaico-sentinel.js) | Gera mosaico Sentinel-2 (composição cor natural e falsa cor B12-B8-B4) para um período configurável, com opção de exportar o recorte do polígono ou a extensão (bounding box). Utiliza o asset PESAM como área de estudo. |
-
-### Landsat e SPOT
-
-| Script | Descrição |
-|--------|-----------|
-| [script-landsat-anual.js](script-landsat-anual.js) | Gera composições anuais Landsat (2000-2008) utilizando composição SWIR2-NIR-Green (7-5-3). Inclui mosaico SPOT 2008 como referência histórica de alta resolução (2.5m). |
-| [script-spot.js](script-spot.js) | Download do mosaico SPOT 2008 de alta resolução (2.5m) para a área de estudo. Útil como referência histórica para detecção de mudanças. |
+| [script-mapbiomas-raster.js](script-mapbiomas-raster.js) | Download de dados MapBiomas Coleção 10 em formato raster (GeoTIFF) com composição colorida por classe. |
+| [script-mapbiomas-shape.js](script-mapbiomas-shape.js) | Exporta dados MapBiomas Coleção 10 em formato vetorial (shapefile) com legenda completa de nomes e cores. |
 
 ### Processamento QGIS
 
 | Script | Descrição |
 |--------|-----------|
-| [aplica-ISO-8859-1.py](aplica-ISO-8859-1.py) | Script Python para QGIS que corrige a codificação de caracteres das camadas importadas (acentos e caracteres especiais). |
-| [aplica-simbologia-pyqgis.py](aplica-simbologia-pyqgis.py) | Aplica symbologia categorizada automaticamente às camadas MapBiomas, utilizando as cores e nomes das classes definidos na vetorização. |
+| [aplica-ISO-8859-1.py](aplica-ISO-8859-1.py) | Corrige codificação de caracteres (acentos e especiais) nas camadas importadas. |
+| [aplica-simbologia-pyqgis.py](aplica-simbologia-pyqgis.py) | Aplica simbologia categorizada automaticamente às camadas MapBiomas. |
 
-## Versões Disponíveis
+## Detalhes dos Scripts de Análise (Sentinel-2)
 
-- [script-gee-comentado.js](script-gee-comentado.js): Versão comentada com documentação completa de cada seção. Recomendada para aprendizado e compreensão dos fundamentos metodológicos.
-- [script-gee-limpo.js](script-gee-limpo.js): Versão otimizada com comentários mínimos. Recomendada para uso operacional após configuração inicial.
-
-## Contextualização Científica
-
-A degradação e conversão de habitats naturais constituem uma das principais ameaças à biodiversidade global. O monitoramento contínuo de áreas protegidas e ecossistemas sensíveis é fundamental para subsidiar políticas de conservação e ações de fiscalização. Os sensores multiespectrais a bordo do satélite Sentinel-2 permitem quantificar alterações na cobertura vegetal através de índices espectrais de alta resolução temporal e espacial.
-
-## Fundamentos Metodológicos
-
-### Dados Utilizados
-
-O script utiliza imagens do produto Sentinel-2 Surface Reflectance Harmonized (COPERNICUS/S2_SR_HARMONIZED), que fornece reflectância de superfície em dez bandas espectrais com resolução de 10 a 60 metros. Este produto já apresenta correções atmosféricas e radiométricas, reduzindo a necessidade de pré-processamento adicional.
+Os scripts `script-gee-comentado.js` e `script-gee-limpo.js` utilizam imagens Sentinel-2 Surface Reflectance Harmonized (COPERNICUS/S2_SR_HARMONIZED) para detectar mudanças na cobertura vegetal.
 
 ### Processamento e Limpeza de Dados
 
-O script implementa um protocolo multi-etapas para garantir qualidade radiométrica:
+Protocolo multi-etapas para garantir qualidade radiométrica:
 
-1. **Filtragem pela Scene Classification Layer (SCL)**: Remove pixels classificados como nuvens, sombras ou neve, mantendo apenas aqueles associados a vegetação, solo exposto e corpos hídricos.
-
-2. **Filtragem pela camada QA60**: Aplica máscaras binárias para eliminar interferência atmosférica (aerossóis) e cobertura nuvosa residual.
-
-3. **Filtro de Brilho**: Remove artefatos de reflexão especular (fantasmas de nuvem) através de limiar aplicado à banda azul (banda 2).
-
-4. **Normalização Radiométrica**: Converte valores digitais brutos para reflectância de superfície (escala 0-1) dividindo por 10.000.
+1. **Filtragem SCL**: Mantém apenas pixels de vegetação (4), solo (5) e água (6).
+2. **Filtragem QA60**: Remove nuvens (bit 10) e aerossóis (bit 11).
+3. **Filtro de Brilho**: Remove reflexos especulares na banda azul (B2 < 2000).
+4. **Normalização**: Converte valores digitais para reflectância (divide por 10.000).
 
 ### Períodos Temporais
 
-A análise compara dois períodos de 6 meses:
-- **Período Atual**: últimos 6 meses
-- **Período Anterior**: 6-12 meses atrás
-
-Esta janela temporal equilibra duas necessidades: maximizar a cobertura de imagens livres de nuvens (comum em regiões tropicais) e manter sensibilidade a mudanças entre períodos.
+A análise compara dois períodos de 6 meses (atual e anterior), balanceando cobertura de imagens e sensibilidade a mudanças.
 
 ### Índices de Vegetação
 
@@ -81,134 +59,121 @@ Esta janela temporal equilibra duas necessidades: maximizar a cobertura de image
 
 $$NDVI = \frac{NIR - RED}{NIR + RED} = \frac{B8 - B4}{B8 + B4}$$
 
-Amplitude: -1 a 1. Valores superiores a 0,5 indicam presença de vegetação densa, enquanto valores próximos a zero ou negativos sugerem ausência de vegetação ou superfícies impermeáveis.
+Valores > 0.5 indicam vegetação densa; próximos de zero ou negativos indicam ausência de vegetação.
 
-#### MVI/NDMI (Moisture Vegetation Index / Normalized Difference Moisture Index)
+#### MVI/NDMI (Moisture Vegetation Index)
 
 $$MVI = \frac{NIR - SWIR}{NIR + SWIR} = \frac{B8A - B11}{B8A + B11}$$
 
-Amplitude: -1 a 1. Este índice é particularmente sensível ao conteúdo de água nas folhas e solo, complementando o NDVI na avaliação de saúde e vigor vegetativo. Valores superiores a 0,3 indicam vegetação bem hidratada.
+Valores > 0.3 indicam vegetação bem hidratada. Complementa o NDVI na avaliação de umidade.
 
 ### Detecção de Mudanças
 
-A mudança na cobertura vegetal é quantificada pela variação temporal de NDVI:
-
 $$\Delta NDVI = NDVI_{Atual} - NDVI_{Passado}$$
 
-Considera-se como alerta de possível desmatamento ou degradação aquelas áreas onde $\Delta NDVI < -0,2$. Este limiar representa uma queda significativa no vigor vegetativo e foi selecionado para balancear sensibilidade com redução de falsos positivos associados a variações sazonais.
+Áreas com $\Delta NDVI < -0.2$ são sinalizadas como possível desmatamento ou degradação.
+
+## Detalhes do Script de Exportação por Períodos
+
+O `script-export-periodos.js` gera mosaicos contínuos cobrindo toda a série histórica:
+
+- **Landsat 5** (1984-2011): bandas NIR, Red, Green, resolução 30m
+- **Landsat 7** (2012-2013): bandas NIR, Red, Green, resolução 30m
+- **Landsat 8** (2014-2021): bandas SWIR2, NIR, Red, resolução 30m
+- **Landsat 9** (2022-2026): bandas Red, Green, Blue, resolução 30m
+- **Sentinel-2** (2015-2026): bandas NIR, Red, Green, resolução 10m
+- **SPOT 2008**: composição RGB, resolução 5m
+
+Cada mosaico inclui banda de data (ano médio do período) e aplica buffer de 1 km ao redor da área de estudo.
 
 ## Configuração e Uso
 
 ### Pré-requisitos
 
-1. Conta ativa no Google Earth Engine (inscrição em https://earthengine.google.com)
-2. Acesso aos dados de asset do Google Cloud Storage contendo a geometria da área de estudo
-3. Autenticação configurada no seu projeto Google Cloud
+1. Conta ativa no Google Earth Engine (https://earthengine.google.com)
+2. Acesso ao asset com a geometria da área de estudo
+3. Autenticação configurada no projeto Google Cloud
 
 ### Adaptação para Diferentes Áreas
 
-A principal modificação necessária é a definição do asset que contém a geometria da área de estudo. Esta modificação é idêntica em ambas as versões:
+Altere o asset da área de estudo em cada script:
 
-**Em script-gee-comentado.js (linha 9):**
 ```javascript
 var areaEstudo = ee.FeatureCollection("projects/seu-projeto/assets/seu-asset");
 ```
 
-**Em script-gee-limpo.js (linha 1):**
-```javascript
-var areaEstudo = ee.FeatureCollection("projects/seu-projeto/assets/seu-asset");
-```
+### Parâmetros Configuráveis
 
-Substitua `seu-projeto` e `seu-asset` pelos identificadores do seu projeto e asset no Google Earth Engine.
-
-### Ajustes Opcionais
-
-Parâmetros que podem ser ajustados conforme necessário:
-
-1. **Períodos Temporais** (linhas 14-16):
-   ```javascript
-   var seisMesesAtras = hoje.advance(-6, 'month');
-   var umAnoAtras = hoje.advance(-12, 'month');
-   ```
-   Altere os valores numéricos para períodos diferentes.
-
-2. **Limiar de Alerta** (linha 63):
-   ```javascript
-   var alertaPerda = ndviAtual.subtract(ndviPassado).lt(-0.2);
-   ```
-   Ajuste o valor -0.2 para maior ou menor sensibilidade. Valores mais negativos (ex: -0.1) aumentam sensibilidade.
-
-3. **Índices Espectrais**: As bandas espectrais podem ser alteradas (ver tabela de bandas do Sentinel-2).
-
-4. **Pasta de Exportação** (linhas 113, 125, 137, etc.):
-   ```javascript
-   folder: 'GEE_Analise_Cobertura',
-   ```
+| Script | Parâmetro | Descrição |
+|--------|-----------|-----------|
+| download-mosaico-sentinel.js | `tipoExportacao` | `'recorte'` (clip no polígono) ou `'extensao'` (bounding box) |
+| download-mosaico-sentinel.js | `dataInicio` / `dataFim` | Período do mosaico |
+| download-mosaico-sentinel.js | `nuvensMax` | Cobertura máxima de nuvens (%) |
+| script-export-periodos.js | `anoInicio` / `anoFim` | Intervalo de anos |
+| script-export-periodos.js | `periodoAnos` | Tamanho de cada período em anos |
+| script-export-periodos.js | `margemMetros` | Buffer ao redor da área (m) |
+| script-gee-comentado.js / limpo.js | Períodos | Janela temporal (padrão: 6 meses) |
+| script-gee-comentado.js / limpo.js | Limiar NDVI | Sensibilidade do alerta (padrão: -0.2) |
 
 ### Execução
 
 1. Acesse https://code.earthengine.google.com
-2. Cole o conteúdo do arquivo `script-gee-comentado.js` (para versão comentada) ou `script-gee-limpo.js` (para versão otimizada)
+2. Cole o conteúdo do script desejado
 3. Clique em "Run" para visualizar as camadas no mapa
 4. Na aba "Tasks", clique em "Run" para cada exportação desejada
 
 ## Saídas Geradas
 
-O script produz as seguintes camadas exportáveis:
+### script-gee-comentado.js / limpo.js
 
-| Saída | Descrição | Resolução | Formato |
-|-------|-----------|-----------|---------|
-| NDVI_Atual_AreaEstudo | Índice de vegetação atual | 10 m | GeoTIFF |
-| NDVI_Passado_AreaEstudo | Índice de vegetação período anterior | 10 m | GeoTIFF |
-| MVI_Atual_AreaEstudo | Índice de umidade atual | 20 m | GeoTIFF |
-| MVI_Passado_AreaEstudo | Índice de umidade período anterior | 20 m | GeoTIFF |
-| Cor_Natural_Atual_AreaEstudo | Composição RGB falsa-cor período atual | 10 m | GeoTIFF |
-| Cor_Natural_Passado_AreaEstudo | Composição RGB falsa-cor período anterior | 10 m | GeoTIFF |
-| Alerta_Mudanca_AreaEstudo | Mapa binário de perda vegetativa | 10 m | GeoTIFF |
+| Saída | Descrição | Resolução |
+|-------|-----------|-----------|
+| Cor Natural (Atual/Passado) | Composição RGB | 10 m |
+| Falsa Cor B12-B8-B4 (Atual/Passado) | Composição infravermelho | 10 m |
+| NDVI (Atual/Passado) | Índice de vegetação | 10 m |
+| MVI (Atual/Passado) | Índice de umidade | 20 m |
+| Alerta de Mudança | Mapa binário de perda vegetativa | 10 m |
+
+### download-mosaico-sentinel.js
+
+| Saída | Descrição | Resolução |
+|-------|-----------|-----------|
+| Mosaico Cor Natural | Composição B4-B3-B2 (RGB) | 10 m |
+| Mosaico Falsa Cor | Composição B12-B8-B4 | 10 m |
+
+### script-export-periodos.js
+
+Mosaicos por período (padrão: 3 anos) para cada satélite, mais SPOT 2008, todos com banda de data. Resolução varia entre 5m (SPOT), 10m (Sentinel-2) e 30m (Landsat).
 
 ## Interpretação de Resultados
 
-### Visualização no Mapa
-
-O script disponibiliza múltiplas camadas para interpretação visual:
-
-- **Cores Naturais**: Composição RGB que simula a visão humana. Útil para identificação de mudanças evidentes de uso do solo.
-- **NDVI**: Código de cores mostra gradiente de vigor vegetativo. Áreas verdes escuras representam vegetação densa; áreas brancas representam ausência de vegetação.
-- **MVI/Umidade**: Gradiente marrom-branco-azul indicando umidade relativa. Útil para identificar stress hídrico.
-- **Alerta de Mudança**: Pixels em magenta destacam áreas com queda significativa de NDVI.
+- **Cores Naturais**: Simula a visão humana. Útil para identificação visual de mudanças de uso do solo.
+- **Falsa Cor (B12-B8-B4)**: Realça umidade (SWIR), vegetação (NIR) e solo (Red).
+- **NDVI**: Gradiente de vigor vegetativo. Verde escuro = vegetação densa; branco = ausência.
+- **MVI/Umidade**: Gradiente seco-úmido.Útil para identificar stress hídrico.
+- **Alerta de Mudança**: Pixels em magenta indicam queda significativa de NDVI.
 
 ### Integração em SIG
 
-Os arquivos GeoTIFF exportados podem ser importados em software de análise geoespacial (QGIS, ArcGIS) para:
+Os GeoTIFFs podem ser importados em QGIS/ArcGIS para cálculo de áreas, análise espacial e relatórios cartográficos.
 
-1. Cálculo de áreas afetadas (rasterização e tabulação cruzada)
-2. Análise espacial e correlação com fatores socioeconômicos
-3. Sobreposição com limites administrativos e camadas temáticas
-4. Relatórios cartográficos para fins de monitoramento e fiscalização
+## Limitações
 
-## Limitações e Considerações
-
-1. **Cobertura de Nuvem**: Regiões com cobertura nuvosa persistente podem apresentar dados insuficientes, mesmo após filtragem. Períodos em estação seca geralmente oferecem melhor qualidade.
-
-2. **Variabilidade Sazonal**: Mudanças sazonais em fenologia vegetativa podem produzir variações em NDVI não associadas a desmatamento real. Comparações multi-anuais aumentam confiabilidade.
-
-3. **Resolução Espacial**: A resolução de 10 metros do Sentinel-2 limita a detecção de conversões em áreas muito pequenas (<1 hectare).
-
-4. **Detecção de Degradação**: O script detecta perda abrupta de NDVI. Degradação gradual ou alterações em composição florestal sem redução significativa de NDVI podem não ser capturadas.
-
-5. **Validação em Campo**: Interpretação remota deve ser validada com dados de levantamento em campo para avaliação de acurácia.
+1. **Cobertura de Nuvem**: Regiões com nuvens persistentes podem ter dados insuficientes.
+2. **Variabilidade Sazonal**: Mudanças fenológicas podem gerar falsos positivos em NDVI.
+3. **Resolução Espacial**: Sentinel-2 (10m) limita detecção em áreas < 1 hectare.
+4. **Degradação Gradual**: Perda abrupta de NDVI é detectada, mas degradação gradual pode não ser.
+5. **Validação**: Resultados remotos devem ser validados com dados de campo.
 
 ## Referências
 
-European Commission, ESA. (2015). Sentinel-2 User Handbook. Available at: https://sentinel.esa.int/
-
-Rouse, J. W., Haas, R. H., Schell, J. A., & Deering, D. W. (1974). Monitoring vegetation systems in the Great Plains with ERTS. NASA Special Publication, 351(1), 309-317.
-
-Gorelick, N., Hancher, M., Dixon, M., Ilyushchenko, S., Thau, D., & Moore, R. (2017). Google Earth Engine: Planetary-scale geospatial analysis for everyone. Remote Sensing of Environment, 202, 18-27.
+- European Commission, ESA. (2015). Sentinel-2 User Handbook. https://sentinel.esa.int/
+- Rouse, J. W. et al. (1974). Monitoring vegetation systems in the Great Plains with ERTS. NASA SP, 351(1), 309-317.
+- Gorelick, N. et al. (2017). Google Earth Engine: Planetary-scale geospatial analysis for everyone. Remote Sensing of Environment, 202, 18-27.
 
 ## Autoria e Contribuições
 
-Script desenvolvido para análise de mudanças na cobertura vegetal em unidades de conservação. Contribuições e melhorias são bem-vindas mediante submissão de issues ou pull requests.
+Script desenvolvido para análise de mudanças na cobertura vegetal em unidades de conservação. Contribuições são bem-vindas via issues ou pull requests.
 
 ## Licença
 
